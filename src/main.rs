@@ -1,5 +1,5 @@
 use actix_web::{web, App, HttpServer};
-use entity::Student;
+use entity::{Classroom, ListDetail, Student, Util, UtilsList};
 use sea_orm::{ConnectionTrait, Database, DatabaseConnection, Schema};
 use std::env;
 
@@ -20,13 +20,27 @@ async fn establish_connection() -> DatabaseConnection {
                 let builder = db.get_database_backend();
                 let schema = Schema::new(builder);
 
-                // Create table statement
-                let stmt = builder.build(&schema.create_table_from_entity(Student));
+                // Create table statements
+                let stmt_utils_list = builder.build(&schema.create_table_from_entity(UtilsList));
+                let stmt_util = builder.build(&schema.create_table_from_entity(Util));
+                let stmt_list_detail = builder.build(&schema.create_table_from_entity(ListDetail));
+                let stmt_classroom = builder.build(&schema.create_table_from_entity(Classroom));
+                let stmt_student = builder.build(&schema.create_table_from_entity(Student));
 
-                // Execute the create table statement
-                match db.execute(stmt).await {
-                    Ok(_) => println!("Table created successfully!"),
-                    Err(e) => println!("Error creating table: {}", e),
+                // Execute the create table statements in the correct order
+                let results = vec![
+                    ("UtilsList", db.execute(stmt_utils_list).await),
+                    ("Util", db.execute(stmt_util).await),
+                    ("ListDetail", db.execute(stmt_list_detail).await),
+                    ("Classroom", db.execute(stmt_classroom).await),
+                    ("Student", db.execute(stmt_student).await),
+                ];
+
+                for (table_name, result) in results {
+                    match result {
+                        Ok(_) => println!("Table '{}' created successfully!", table_name),
+                        Err(e) => println!("Error creating table '{}': {}", table_name, e),
+                    }
                 }
 
                 return db;
