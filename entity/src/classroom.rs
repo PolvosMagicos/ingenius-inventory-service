@@ -13,6 +13,8 @@ pub struct Model {
 pub enum Relation {
     #[sea_orm(has_many = "super::student::Entity")]
     Student,
+    #[sea_orm(has_many = "super::request::Entity")]
+    Request,
     #[sea_orm(
         belongs_to = "super::utils_list::Entity",
         from = "Column::UtilsListId",
@@ -33,4 +35,9 @@ impl Related<super::utils_list::Entity> for Entity {
     }
 }
 
+impl Related<super::request::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Request.def()
+    }
+}
 impl ActiveModelBehavior for ActiveModel {}

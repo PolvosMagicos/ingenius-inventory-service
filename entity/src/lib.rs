@@ -15,3 +15,7 @@ pub use crate::util::Entity as Util;
 
 pub mod request_detail;
 pub use crate::request_detail::Entity as RequestDetail;
+
+pub mod request;
+pub use crate::request::Entity as Request;
+
