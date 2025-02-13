@@ -12,3 +12,6 @@ pub use crate::list_detail::Entity as ListDetail;
 
 pub mod util;
 pub use crate::util::Entity as Util;
+
+pub mod request_detail;
+pub use crate::request_detail::Entity as RequestDetail;
