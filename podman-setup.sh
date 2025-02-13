@@ -15,6 +15,13 @@ if podman pod exists ingenius-pod; then
     podman pod rm -f ingenius-pod
 fi
 
+
+# Remove existing volume if it exists
+if podman volume exists ingenius-db-data; then
+    echo "Removing existing volume..."
+    podman volume rm -f ingenius-db-data
+fi
+
 # Create the pod with DNS settings
 echo "Creating pod..."
 podman pod create \
