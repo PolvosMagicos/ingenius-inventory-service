@@ -24,3 +24,7 @@ pub use crate::user::Entity as User;
 
 pub mod purchase;
 pub use crate::purchase::Entity as Purchase;
+
+pub mod purchase_detail;
+ pub use crate::purchase_detail::Entity as PurchaseDetail;
+ 

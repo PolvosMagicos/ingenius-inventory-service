@@ -15,6 +15,8 @@ pub enum Relation {
     ListDetail,
     #[sea_orm(has_one = "super::request_detail::Entity")]
     RequestDetail,
+    #[sea_orm(has_one = "super::purchase_detail::Entity")]
+    PurchaseDetail,
 }
 
 impl Related<super::classroom::Entity> for Entity {
@@ -26,6 +28,12 @@ impl Related<super::classroom::Entity> for Entity {
 impl Related<super::request_detail::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::RequestDetail.def()
+    }
+}
+
+impl Related<super::purchase_detail::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::PurchaseDetail.def()
     }
 }
 
