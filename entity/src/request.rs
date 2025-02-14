@@ -9,6 +9,7 @@ pub struct Model {
     pub date: DateTime,
     pub status: String,
     pub classroom_id: i32,
+    pub user_id: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -19,11 +20,23 @@ pub enum Relation {
         to = "super::classroom::Column::Id"
     )]
     Classroom,
+    #[sea_orm(
+        belongs_to = "super::user::Entity",
+        from = "Column::UserId",
+        to = "super::user::Column::Id"
+    )]
+    User,
 }
 
 impl Related<super::classroom::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Classroom.def()
+    }
+}
+
+impl Related<super::user::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::User.def()
     }
 }
 
