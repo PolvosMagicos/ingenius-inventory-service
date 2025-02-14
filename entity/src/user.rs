@@ -7,7 +7,7 @@ pub struct Model {
     pub id: i32,
     pub name: String,
     pub last_name: String,
-    pub email: String,
+    pub email:String ,
     pub password: String,
     pub photo_url: String,
     pub role: String,
@@ -17,6 +17,8 @@ pub struct Model {
 pub enum Relation {
     #[sea_orm(has_one = "super::request::Entity")]
     Request,
+    #[sea_orm(has_one = "super::purchase::Entity")]
+    Purchase,
 }
 
 impl Related<super::request::Entity> for Entity {
@@ -25,5 +27,10 @@ impl Related<super::request::Entity> for Entity {
     }
 }
 
+impl Related<super::purchase::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Purchase.def()
+    }
+}
 
 impl ActiveModelBehavior for ActiveModel {}

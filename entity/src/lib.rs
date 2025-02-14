@@ -21,3 +21,6 @@ pub use crate::request::Entity as Request;
 
 pub mod user;
 pub use crate::user::Entity as User;
+
+pub mod purchase;
+pub use crate::purchase::Entity as Purchase;

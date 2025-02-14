@@ -1,5 +1,5 @@
 use actix_web::{web, App, HttpServer};
-use entity::{Classroom, ListDetail, Request, Student, User, Util, UtilsList};
+use entity::{Classroom, ListDetail, Purchase, Request, Student, User, Util, UtilsList};
 use sea_orm::{ConnectionTrait, Database, DatabaseConnection, Schema};
 use std::env;
 
@@ -28,6 +28,7 @@ async fn establish_connection() -> DatabaseConnection {
                 let stmt_student = builder.build(&schema.create_table_from_entity(Student));
                 let stmt_request = builder.build(&schema.create_table_from_entity(Request));
                 let stmt_user = builder.build(&schema.create_table_from_entity(User));
+                let stmt_purchase = builder.build(&schema.create_table_from_entity(Purchase));
 
                 // Execute the create table statements in the correct order
                 let results = vec![
@@ -38,6 +39,7 @@ async fn establish_connection() -> DatabaseConnection {
                     ("Student", db.execute(stmt_student).await),
                     ("Request", db.execute(stmt_request).await),
                     ("User", db.execute(stmt_user).await),
+                    ("Purchase", db.execute(stmt_purchase).await),
                 ];
 
                 for (table_name, result) in results {
