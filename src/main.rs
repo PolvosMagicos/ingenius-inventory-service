@@ -26,8 +26,8 @@ async fn establish_connection() -> DatabaseConnection {
                 let stmt_list_detail = builder.build(&schema.create_table_from_entity(ListDetail));
                 let stmt_classroom = builder.build(&schema.create_table_from_entity(Classroom));
                 let stmt_student = builder.build(&schema.create_table_from_entity(Student));
-                let stmt_request = builder.build(&schema.create_table_from_entity(Request));
                 let stmt_user = builder.build(&schema.create_table_from_entity(User));
+                let stmt_request = builder.build(&schema.create_table_from_entity(Request));
                 let stmt_purchase = builder.build(&schema.create_table_from_entity(Purchase));
                 let stmt_purchase_detail = builder.build(&schema.create_table_from_entity(PurchaseDetail));
 
@@ -38,8 +38,8 @@ async fn establish_connection() -> DatabaseConnection {
                     ("ListDetail", db.execute(stmt_list_detail).await),
                     ("Classroom", db.execute(stmt_classroom).await),
                     ("Student", db.execute(stmt_student).await),
-                    ("Request", db.execute(stmt_request).await),
                     ("User", db.execute(stmt_user).await),
+                    ("Request", db.execute(stmt_request).await),
                     ("Purchase", db.execute(stmt_purchase).await),
                     ("PurchaseDetail", db.execute(stmt_purchase_detail).await),
                 ];
