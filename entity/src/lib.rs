@@ -26,5 +26,4 @@ pub mod purchase;
 pub use crate::purchase::Entity as Purchase;
 
 pub mod purchase_detail;
- pub use crate::purchase_detail::Entity as PurchaseDetail;
- 
+pub use crate::purchase_detail::Entity as PurchaseDetail;
