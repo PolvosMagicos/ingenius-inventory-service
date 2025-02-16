@@ -1,7 +1,8 @@
 use crate::classroom::routes::configure;
 use actix_web::{web, App, HttpServer};
 use entity::{
-    Classroom, ListDetail, Purchase, PurchaseDetail, Request, Student, User, Util, UtilsList,
+    Classroom, Delivery, ListDetail, MoneyDelivery, Purchase, PurchaseDetail, Request,
+    SchoolSupplyBalance, Student, User, Util, UtilsDelivery, UtilsDeliveryDetail, UtilsList,
 };
 use sea_orm::{ConnectionTrait, Database, DatabaseConnection, Schema};
 use std::env;
@@ -36,6 +37,15 @@ async fn establish_connection() -> DatabaseConnection {
                 let stmt_purchase = builder.build(&schema.create_table_from_entity(Purchase));
                 let stmt_purchase_detail =
                     builder.build(&schema.create_table_from_entity(PurchaseDetail));
+                let stmt_delivery = builder.build(&schema.create_table_from_entity(Delivery));
+                let stmt_money_delivery =
+                    builder.build(&schema.create_table_from_entity(MoneyDelivery));
+                let stmt_utils_delivery =
+                    builder.build(&schema.create_table_from_entity(UtilsDelivery));
+                let stmt_utils_delivery_detail =
+                    builder.build(&schema.create_table_from_entity(UtilsDeliveryDetail));
+                let stmt_school_supply_balance =
+                    builder.build(&schema.create_table_from_entity(SchoolSupplyBalance));
 
                 // Execute the create table statements in the correct order
                 let results = vec![
@@ -48,6 +58,17 @@ async fn establish_connection() -> DatabaseConnection {
                     ("Request", db.execute(stmt_request).await),
                     ("Purchase", db.execute(stmt_purchase).await),
                     ("PurchaseDetail", db.execute(stmt_purchase_detail).await),
+                    ("Delivery", db.execute(stmt_delivery).await),
+                    ("MoneyDelivery", db.execute(stmt_money_delivery).await),
+                    ("UtilsDelivery", db.execute(stmt_utils_delivery).await),
+                    (
+                        "UtilsDeliveryDetail",
+                        db.execute(stmt_utils_delivery_detail).await,
+                    ),
+                    (
+                        "SchoolSupplyBalance",
+                        db.execute(stmt_school_supply_balance).await,
+                    ),
                 ];
 
                 for (table_name, result) in results {
