@@ -1,7 +1,12 @@
+use crate::classroom::routes::configure;
 use actix_web::{web, App, HttpServer};
-use entity::{Classroom, ListDetail, Purchase, PurchaseDetail, Request, Student, User, Util, UtilsList};
+use entity::{
+    Classroom, ListDetail, Purchase, PurchaseDetail, Request, Student, User, Util, UtilsList,
+};
 use sea_orm::{ConnectionTrait, Database, DatabaseConnection, Schema};
 use std::env;
+
+mod classroom;
 
 async fn establish_connection() -> DatabaseConnection {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
@@ -29,7 +34,8 @@ async fn establish_connection() -> DatabaseConnection {
                 let stmt_user = builder.build(&schema.create_table_from_entity(User));
                 let stmt_request = builder.build(&schema.create_table_from_entity(Request));
                 let stmt_purchase = builder.build(&schema.create_table_from_entity(Purchase));
-                let stmt_purchase_detail = builder.build(&schema.create_table_from_entity(PurchaseDetail));
+                let stmt_purchase_detail =
+                    builder.build(&schema.create_table_from_entity(PurchaseDetail));
 
                 // Execute the create table statements in the correct order
                 let results = vec![
@@ -85,8 +91,8 @@ async fn main() -> std::io::Result<()> {
 
     println!("Starting HTTP server...");
 
-    let server =
-        HttpServer::new(move || App::new().app_data(db_pool.clone())).bind(("0.0.0.0", 8080));
+    let server = HttpServer::new(move || App::new().app_data(db_pool.clone()).configure(configure))
+        .bind(("0.0.0.0", 8080));
 
     let server = match server {
         Ok(s) => s,
