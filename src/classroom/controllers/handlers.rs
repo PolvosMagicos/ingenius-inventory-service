@@ -2,10 +2,11 @@ use crate::classroom::dtos::create_classroom::ClassroomDto;
 use crate::classroom::services::classroom_services::ClassroomService;
 use actix_web::{web, HttpResponse, Responder};
 use sea_orm::DatabaseConnection;
+use uuid::Uuid;
 
 pub async fn get_classroom(
     db: web::Data<DatabaseConnection>,
-    id: web::Path<i32>,
+    id: web::Path<Uuid>,
 ) -> impl Responder {
     let db = db.get_ref();
     let classroom = ClassroomService::get_classroom(db, id.into_inner()).await;
@@ -32,7 +33,7 @@ pub async fn create_classroom(
 
 pub async fn update_classroom(
     db: web::Data<DatabaseConnection>,
-    id: web::Path<i32>,
+    id: web::Path<Uuid>,
     classroom_dto: web::Json<ClassroomDto>,
 ) -> impl Responder {
     let db = db.get_ref();
@@ -47,7 +48,7 @@ pub async fn update_classroom(
 
 pub async fn delete_classroom(
     db: web::Data<DatabaseConnection>,
-    id: web::Path<i32>,
+    id: web::Path<Uuid>,
 ) -> impl Responder {
     let db = db.get_ref();
     let result = ClassroomService::delete_classroom(db, id.into_inner()).await;

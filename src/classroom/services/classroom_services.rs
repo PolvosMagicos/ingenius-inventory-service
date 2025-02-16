@@ -1,13 +1,12 @@
 use super::super::dtos::create_classroom::ClassroomDto;
-use entity::classroom::{ActiveModel, Column, Entity, Model};
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter, Set,
-};
+use entity::classroom::{ActiveModel, Entity, Model};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, Set};
+use uuid::Uuid;
 
 pub struct ClassroomService;
 
 impl ClassroomService {
-    pub async fn get_classroom(db: &DatabaseConnection, id: i32) -> Result<Option<Model>, DbErr> {
+    pub async fn get_classroom(db: &DatabaseConnection, id: Uuid) -> Result<Option<Model>, DbErr> {
         Entity::find_by_id(id).one(db).await
     }
 
@@ -25,7 +24,7 @@ impl ClassroomService {
 
     pub async fn update_classroom(
         db: &DatabaseConnection,
-        id: i32,
+        id: Uuid,
         classroom_dto: ClassroomDto,
     ) -> Result<Model, DbErr> {
         let classroom = Entity::find_by_id(id).one(db).await?;
@@ -33,7 +32,9 @@ impl ClassroomService {
         if let Some(classroom) = classroom {
             let mut classroom: ActiveModel = classroom.into();
             classroom.name = Set(classroom_dto.name);
-            classroom.utils_list_id = Set(classroom_dto.utils_list_id);
+            if let Some(utils_list_id) = classroom_dto.utils_list_id {
+                classroom.utils_list_id = Set(utils_list_id);
+            }
 
             classroom.update(db).await
         } else {
@@ -41,7 +42,7 @@ impl ClassroomService {
         }
     }
 
-    pub async fn delete_classroom(db: &DatabaseConnection, id: i32) -> Result<(), DbErr> {
+    pub async fn delete_classroom(db: &DatabaseConnection, id: Uuid) -> Result<(), DbErr> {
         Entity::delete_by_id(id).exec(db).await?;
         Ok(())
     }

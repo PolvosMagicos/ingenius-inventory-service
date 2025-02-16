@@ -69,7 +69,7 @@ podman run -d --replace \
     --name ingenius-service \
     --restart unless-stopped \
     -e DATABASE_URL=postgres://postgres:postgres@localhost:5432/ingenius \
-    -e RUST_BACKTRACE=1 \
+    -e RUST_BACKTRACE=full \
     -e RUST_LOG=debug \
     ingenius-service
 
