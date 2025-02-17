@@ -11,6 +11,10 @@ impl UtilService {
         Entity::find_by_id(id).one(db).await
     }
 
+    pub async fn get_all_utils(db: &DatabaseConnection) -> Result<Vec<Model>, DbErr> {
+        Entity::find().all(db).await
+    }
+
     pub async fn create_util(
         db: &DatabaseConnection,
         util_dto: CreateUtilDto,

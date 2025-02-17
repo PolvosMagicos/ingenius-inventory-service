@@ -18,6 +18,16 @@ pub async fn get_util(db: web::Data<DatabaseConnection>, id: web::Path<Uuid>) ->
     }
 }
 
+pub async fn get_all_utils(db: web::Data<DatabaseConnection>) -> impl Responder {
+    let db = db.get_ref();
+    let utils = UtilService::get_all_utils(db).await;
+
+    match utils {
+        Ok(utils) => HttpResponse::Ok().json(utils),
+        Err(_) => HttpResponse::InternalServerError().body("Internal server error"),
+    }
+}
+
 pub async fn create_util(
     db: web::Data<DatabaseConnection>,
     util_dto: web::Json<CreateUtilDto>,

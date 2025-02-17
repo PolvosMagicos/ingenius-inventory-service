@@ -20,6 +20,16 @@ pub async fn get_classroom(
     }
 }
 
+pub async fn get_all_classrooms(db: web::Data<DatabaseConnection>) -> impl Responder {
+    let db = db.get_ref();
+    let classrooms = ClassroomService::get_all_classrooms(db).await;
+
+    match classrooms {
+        Ok(classrooms) => HttpResponse::Ok().json(classrooms),
+        Err(_) => HttpResponse::InternalServerError().body("Internal server error"),
+    }
+}
+
 pub async fn create_classroom(
     db: web::Data<DatabaseConnection>,
     classroom_dto: web::Json<CreateClassroomDto>,
