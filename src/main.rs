@@ -8,10 +8,12 @@ use std::env;
 
 mod classroom;
 mod util;
+mod util_list;
 
 fn configure(cfg: &mut web::ServiceConfig) {
     classroom::routes::config(cfg);
     util::routes::config(cfg);
+    util_list::routes::config(cfg);
 }
 
 async fn establish_connection() -> DatabaseConnection {
