@@ -1,4 +1,3 @@
-use crate::classroom::routes::configure;
 use actix_web::{web, App, HttpServer};
 use entity::{
     Classroom, Delivery, ListDetail, MoneyDelivery, Purchase, PurchaseDetail, Request,
@@ -8,6 +7,12 @@ use sea_orm::{ConnectionTrait, Database, DatabaseConnection, Schema};
 use std::env;
 
 mod classroom;
+mod util;
+
+fn configure(cfg: &mut web::ServiceConfig) {
+    classroom::routes::config(cfg);
+    util::routes::config(cfg);
+}
 
 async fn establish_connection() -> DatabaseConnection {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
