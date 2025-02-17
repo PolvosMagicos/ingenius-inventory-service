@@ -16,6 +16,7 @@ impl ClassroomService {
         classroom_dto: CreateClassroomDto,
     ) -> Result<Model, DbErr> {
         let classroom = ActiveModel {
+            id: Set(Uuid::new_v4()),
             name: Set(classroom_dto.name),
             ..Default::default()
         };
