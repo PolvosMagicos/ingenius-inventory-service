@@ -1,18 +1,59 @@
-use entity::classroom::{ActiveModel, Entity, Model};
+use entity::{
+    classroom::{ActiveModel, Entity, Model},
+    utils_list,
+};
 use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, Set};
 use uuid::Uuid;
 
-use crate::classroom::dtos::{CreateClassroomDto, UpdateClassroomDto};
+use crate::classroom::dtos::{
+    ClassroomResponse, ClassroomWithUtilsList, CreateClassroomDto, UpdateClassroomDto,
+};
 
 pub struct ClassroomService;
 
 impl ClassroomService {
-    pub async fn get_classroom(db: &DatabaseConnection, id: Uuid) -> Result<Option<Model>, DbErr> {
-        Entity::find_by_id(id).one(db).await
+    pub async fn get_classroom(
+        db: &DatabaseConnection,
+        id: Uuid,
+    ) -> Result<Option<ClassroomWithUtilsList>, DbErr> {
+        let result = Entity::find_by_id(id)
+            .find_also_related(utils_list::Entity)
+            .one(db)
+            .await?;
+        Ok(result.map(|(classroom, utils_list)| {
+            let classroom_response = ClassroomResponse {
+                id: classroom.id,
+                name: classroom.name,
+            };
+            ClassroomWithUtilsList {
+                classroom: classroom_response,
+                utils_list,
+            }
+        }))
     }
 
-    pub async fn get_all_classrooms(db: &DatabaseConnection) -> Result<Vec<Model>, DbErr> {
-        Entity::find().all(db).await
+    pub async fn get_all_classrooms(
+        db: &DatabaseConnection,
+    ) -> Result<Vec<ClassroomWithUtilsList>, DbErr> {
+        let results = Entity::find()
+            .find_also_related(utils_list::Entity)
+            .all(db)
+            .await?;
+
+        let classrooms_with_utils = results
+            .into_iter()
+            .map(|(classroom, utils_list)| {
+                let classroom_response = ClassroomResponse {
+                    id: classroom.id,
+                    name: classroom.name,
+                };
+                ClassroomWithUtilsList {
+                    classroom: classroom_response,
+                    utils_list,
+                }
+            })
+            .collect();
+        Ok(classrooms_with_utils)
     }
 
     pub async fn create_classroom(
