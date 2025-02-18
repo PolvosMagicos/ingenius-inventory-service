@@ -8,23 +8,41 @@ use sea_orm::DatabaseConnection;
 use uuid::Uuid;
 
 pub async fn get_util(db: web::Data<DatabaseConnection>, id: web::Path<Uuid>) -> impl Responder {
+    let util_id = id.into_inner();
+    info!("Fetching util with id: {}", util_id);
     let db = db.get_ref();
-    let util = UtilService::get_util(db, id.into_inner()).await;
+    let util = UtilService::get_util(db, util_id).await;
 
     match util {
-        Ok(Some(util)) => HttpResponse::Ok().json(util),
-        Ok(None) => HttpResponse::NotFound().body("Util not found"),
-        Err(_) => HttpResponse::InternalServerError().body("Internal server error"),
+        Ok(Some(util)) => {
+            info!("Successfully fetched util: {:?}", util);
+            HttpResponse::Ok().json(util)
+        }
+        Ok(None) => {
+            info!("Util not found with id: {}", util_id);
+            HttpResponse::NotFound().body("Util not found")
+        }
+        Err(e) => {
+            error!("Failed to fetch util with id: {}: {}", util_id, e);
+            HttpResponse::InternalServerError().body("Internal server error")
+        }
     }
 }
 
 pub async fn get_all_utils(db: web::Data<DatabaseConnection>) -> impl Responder {
+    info!("Fetching all utils");
     let db = db.get_ref();
     let utils = UtilService::get_all_utils(db).await;
 
     match utils {
-        Ok(utils) => HttpResponse::Ok().json(utils),
-        Err(_) => HttpResponse::InternalServerError().body("Internal server error"),
+        Ok(utils) => {
+            info!("Successfully fetched {} utils", utils.len());
+            HttpResponse::Ok().json(utils)
+        }
+        Err(e) => {
+            error!("Failed to fetch utils: {}", e);
+            HttpResponse::InternalServerError().body("Internal server error")
+        }
     }
 }
 
@@ -32,18 +50,18 @@ pub async fn create_util(
     db: web::Data<DatabaseConnection>,
     util_dto: web::Json<CreateUtilDto>,
 ) -> impl Responder {
+    info!("Creating new util with data: {:?}", util_dto);
     let db = db.get_ref();
-    info!("Creating new util: {:?}", util_dto);
 
     let result = UtilService::create_util(db, util_dto.into_inner()).await;
 
     match result {
         Ok(util) => {
-            info!("Util created successfully: {:?}", util);
+            info!("Successfully created util: {:?}", util);
             HttpResponse::Ok().json(util)
         }
         Err(e) => {
-            error!("Error creating util: {}", e);
+            error!("Failed to create util: {}", e);
             HttpResponse::InternalServerError().body("Internal server error")
         }
     }
@@ -54,21 +72,40 @@ pub async fn update_util(
     id: web::Path<Uuid>,
     util_dto: web::Json<UpdateUtilDto>,
 ) -> impl Responder {
+    let util_id = id.into_inner();
+    info!(
+        "Updating util with id: {} and data: {:?}",
+        util_id, util_dto
+    );
     let db = db.get_ref();
-    let result = UtilService::update_util(db, id.into_inner(), util_dto.into_inner()).await;
+    let result = UtilService::update_util(db, util_id, util_dto.into_inner()).await;
 
     match result {
-        Ok(util) => HttpResponse::Ok().json(util),
-        Err(_) => HttpResponse::InternalServerError().body("Internal server error"),
+        Ok(util) => {
+            info!("Successfully updated util: {:?}", util);
+            HttpResponse::Ok().json(util)
+        }
+        Err(e) => {
+            error!("Failed to update util with id: {}: {}", util_id, e);
+            HttpResponse::InternalServerError().body("Internal server error")
+        }
     }
 }
 
 pub async fn delete_util(db: web::Data<DatabaseConnection>, id: web::Path<Uuid>) -> impl Responder {
+    let util_id = id.into_inner();
+    info!("Deleting util with id: {}", util_id);
     let db = db.get_ref();
-    let result = UtilService::delete_util(db, id.into_inner()).await;
+    let result = UtilService::delete_util(db, util_id).await;
 
     match result {
-        Ok(_) => HttpResponse::Ok().body("Util deleted"),
-        Err(_) => HttpResponse::InternalServerError().body("Internal server error"),
+        Ok(_) => {
+            info!("Successfully deleted util with id: {}", util_id);
+            HttpResponse::Ok().body("Util deleted")
+        }
+        Err(e) => {
+            error!("Failed to delete util with id: {}: {}", util_id, e);
+            HttpResponse::InternalServerError().body("Internal server error")
+        }
     }
 }
