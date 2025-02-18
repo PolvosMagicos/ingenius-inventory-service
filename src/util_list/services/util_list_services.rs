@@ -37,18 +37,19 @@ impl UtilListService {
     ) -> Result<Model, DbErr> {
         let util_list = Entity::find_by_id(id).one(db).await?;
 
-        if let Some(util_list) = util_list {
-            let mut util_list: ActiveModel = util_list.into();
+        if let Some(existing_util_list) = util_list {
+            let mut util_list_active_model: ActiveModel = existing_util_list.into();
+
             if let Some(name) = util_list_dto.name {
-                util_list.name = Set(name);
+                util_list_active_model.name = Set(name);
             }
             if let Some(total) = util_list_dto.total {
-                util_list.total = Set(total);
+                util_list_active_model.total = Set(total);
             }
 
-            util_list.update(db).await
+            util_list_active_model.update(db).await
         } else {
-            Err(DbErr::RecordNotFound("Util not found".to_string()))
+            Err(DbErr::RecordNotFound("Util list not found".to_string()))
         }
     }
 

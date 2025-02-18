@@ -74,7 +74,7 @@ pub async fn update_classroom(
     id: web::Path<Uuid>,
     classroom_dto: web::Json<UpdateClassroomDto>,
 ) -> impl Responder {
-    let classroom_id = id.into_inner(); // Extract the Uuid from the Path
+    let classroom_id = id.into_inner();
     info!(
         "Updating classroom with id: {} and data: {:?}",
         classroom_id, classroom_dto
@@ -102,7 +102,7 @@ pub async fn delete_classroom(
     db: web::Data<DatabaseConnection>,
     id: web::Path<Uuid>,
 ) -> impl Responder {
-    let classroom_id = id.into_inner(); // Extract the Uuid from the Path
+    let classroom_id = id.into_inner();
     info!("Deleting classroom with id: {}", classroom_id);
     let db = db.get_ref();
     let result = ClassroomService::delete_classroom(db, classroom_id).await;

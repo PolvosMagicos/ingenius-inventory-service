@@ -35,14 +35,16 @@ impl ClassroomService {
     ) -> Result<Model, DbErr> {
         let classroom = Entity::find_by_id(id).one(db).await?;
 
-        if let Some(classroom) = classroom {
-            let mut classroom: ActiveModel = classroom.into();
-            if let Some(name) = classroom_dto.name {
-                classroom.name = Set(name);
-            }
-            classroom.utils_list_id = Set(classroom_dto.utils_list_id);
+        if let Some(existing_classroom) = classroom {
+            let mut classroom_active_model: ActiveModel = existing_classroom.into();
 
-            classroom.update(db).await
+            if let Some(name) = classroom_dto.name {
+                classroom_active_model.name = Set(name);
+            }
+
+            classroom_active_model.utils_list_id = Set(classroom_dto.utils_list_id);
+
+            classroom_active_model.update(db).await
         } else {
             Err(DbErr::RecordNotFound("Classroom not found".to_string()))
         }

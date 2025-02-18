@@ -11,39 +11,39 @@ pub async fn get_util_list(
     db: web::Data<DatabaseConnection>,
     id: web::Path<Uuid>,
 ) -> impl Responder {
-    let util_id = id.into_inner(); // Extract the Uuid from the Path
-    info!("Fetching util list with id: {}", util_id);
+    let util_list_id = id.into_inner();
+    info!("Fetching util list with id: {}", util_list_id);
     let db = db.get_ref();
-    let util = UtilListService::get_util_list(db, util_id).await;
+    let util_list = UtilListService::get_util_list(db, util_list_id).await;
 
-    match util {
-        Ok(Some(util)) => {
-            info!("Successfully fetched util list: {:?}", util);
-            HttpResponse::Ok().json(util)
+    match util_list {
+        Ok(Some(util_list)) => {
+            info!("Successfully fetched util list: {:?}", util_list);
+            HttpResponse::Ok().json(util_list)
         }
         Ok(None) => {
-            info!("Util list not found with id: {}", util_id);
+            info!("Util list not found with id: {}", util_list_id);
             HttpResponse::NotFound().body("Util not found")
         }
         Err(e) => {
-            error!("Failed to fetch util list with id: {}: {}", util_id, e);
+            error!("Failed to fetch util list with id: {}: {}", util_list_id, e);
             HttpResponse::InternalServerError().body("Internal server error")
         }
     }
 }
 
 pub async fn get_all_util_lists(db: web::Data<DatabaseConnection>) -> impl Responder {
-    info!("Fetching all util lists");
+    info!("Fetching all utils lists");
     let db = db.get_ref();
-    let utils = UtilListService::get_all_util_lists(db).await;
+    let utils_lists = UtilListService::get_all_util_lists(db).await;
 
-    match utils {
+    match utils_lists {
         Ok(utils) => {
-            info!("Successfully fetched {} util lists", utils.len());
+            info!("Successfully fetched {} utils lists", utils.len());
             HttpResponse::Ok().json(utils)
         }
         Err(e) => {
-            error!("Failed to fetch util lists: {}", e);
+            error!("Failed to fetch utils lists: {}", e);
             HttpResponse::InternalServerError().body("Internal server error")
         }
     }
@@ -59,9 +59,9 @@ pub async fn create_util_list(
     let result = UtilListService::create_util_list(db, util_list_dto.into_inner()).await;
 
     match result {
-        Ok(util) => {
-            info!("Successfully created util list: {:?}", util);
-            HttpResponse::Ok().json(util)
+        Ok(util_list) => {
+            info!("Successfully created util list: {:?}", util_list);
+            HttpResponse::Ok().json(util_list)
         }
         Err(e) => {
             error!("Failed to create util list: {}", e);
@@ -75,21 +75,24 @@ pub async fn update_util_list(
     id: web::Path<Uuid>,
     util_dto: web::Json<UpdateUtilListDto>,
 ) -> impl Responder {
-    let util_id = id.into_inner(); // Extract the Uuid from the Path
+    let util_list_id = id.into_inner();
     info!(
-        "Updating util list with id: {} and data: {:?}",
-        util_id, util_dto
+        "Updating utils list with id: {} and data: {:?}",
+        util_list_id, util_dto
     );
     let db = db.get_ref();
-    let result = UtilListService::update_util_list(db, util_id, util_dto.into_inner()).await;
+    let result = UtilListService::update_util_list(db, util_list_id, util_dto.into_inner()).await;
 
     match result {
-        Ok(util) => {
-            info!("Successfully updated util list: {:?}", util);
-            HttpResponse::Ok().json(util)
+        Ok(util_list_id) => {
+            info!("Successfully updated utils list: {:?}", util_list_id);
+            HttpResponse::Ok().json(util_list_id)
         }
         Err(e) => {
-            error!("Failed to update util list with id: {}: {}", util_id, e);
+            error!(
+                "Failed to update utils list with id: {}: {}",
+                util_list_id, e
+            );
             HttpResponse::InternalServerError().body("Internal server error")
         }
     }
@@ -99,18 +102,21 @@ pub async fn delete_util_list(
     db: web::Data<DatabaseConnection>,
     id: web::Path<Uuid>,
 ) -> impl Responder {
-    let util_id = id.into_inner(); // Extract the Uuid from the Path
-    info!("Deleting util list with id: {}", util_id);
+    let util_list_id = id.into_inner();
+    info!("Deleting util list with id: {}", util_list_id);
     let db = db.get_ref();
-    let result = UtilListService::delete_util_list(db, util_id).await;
+    let result = UtilListService::delete_util_list(db, util_list_id).await;
 
     match result {
         Ok(_) => {
-            info!("Successfully deleted util list with id: {}", util_id);
+            info!("Successfully deleted utils list with id: {}", util_list_id);
             HttpResponse::Ok().body("Util deleted")
         }
         Err(e) => {
-            error!("Failed to delete util list with id: {}: {}", util_id, e);
+            error!(
+                "Failed to delete utils list with id: {}: {}",
+                util_list_id, e
+            );
             HttpResponse::InternalServerError().body("Internal server error")
         }
     }

@@ -33,18 +33,19 @@ impl UtilService {
         id: Uuid,
         util_dto: UpdateUtilDto,
     ) -> Result<Model, DbErr> {
-        let util = Entity::find_by_id(id).one(db).await?;
+        let existing_util = Entity::find_by_id(id).one(db).await?;
 
-        if let Some(util) = util {
-            let mut util: ActiveModel = util.into();
+        if let Some(util_model) = existing_util {
+            let mut util_active_model: ActiveModel = util_model.into();
+
             if let Some(name) = util_dto.name {
-                util.name = Set(name);
+                util_active_model.name = Set(name);
             }
             if let Some(stock) = util_dto.stock {
-                util.stock = Set(stock);
+                util_active_model.stock = Set(stock);
             }
 
-            util.update(db).await
+            util_active_model.update(db).await
         } else {
             Err(DbErr::RecordNotFound("Util not found".to_string()))
         }
