@@ -27,7 +27,7 @@ impl ListDetailService {
         let list_detail = ActiveModel {
             id: Set(Uuid::new_v4()),
             utils_list_id: Set(list_detail_dto.utils_list),
-            util_id: Set(list_detail_dto.utils_list),
+            util_id: Set(list_detail_dto.util),
             quantity: Set(list_detail_dto.quantity),
         };
 

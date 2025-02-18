@@ -22,7 +22,7 @@ impl ClassroomService {
         let classroom = ActiveModel {
             id: Set(Uuid::new_v4()),
             name: Set(classroom_dto.name),
-            ..Default::default()
+            utils_list_id: Set(classroom_dto.utils_list),
         };
 
         classroom.insert(db).await
@@ -42,7 +42,9 @@ impl ClassroomService {
                 classroom_active_model.name = Set(name);
             }
 
-            classroom_active_model.utils_list_id = Set(classroom_dto.utils_list_id);
+            if let Some(utils_list) = classroom_dto.utils_list {
+                classroom_active_model.utils_list_id = Set(Some(utils_list));
+            }
 
             classroom_active_model.update(db).await
         } else {
