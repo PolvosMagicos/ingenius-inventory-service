@@ -1,3 +1,4 @@
+use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use db::establish_connection;
 
@@ -60,6 +61,17 @@ async fn main() -> std::io::Result<()> {
             .app_data(db_pool.clone())
             .app_data(auth_service.clone())
             .wrap(actix_web::middleware::Logger::default())
+            .wrap(
+                Cors::default()
+                    .allow_any_origin()
+                    .allowed_methods(vec!["GET", "POST", "PUT", "PATCH", "DELETE"])
+                    .allowed_headers(vec![
+                        actix_web::http::header::AUTHORIZATION,
+                        actix_web::http::header::ACCEPT,
+                        actix_web::http::header::CONTENT_TYPE,
+                    ])
+                    .max_age(3600),
+            )
             .configure(configure)
     })
     .bind(("0.0.0.0", 8080));
