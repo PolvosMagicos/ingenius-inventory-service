@@ -29,7 +29,7 @@ podman pod create \
     --network ingenius-network \
     --share net \
     --publish 8080:8080 \
-    --publish 5432:5432
+    --publish 5433:5432
 
 # Start the database
 echo "Starting database..."
@@ -40,7 +40,7 @@ podman run -d \
     -e POSTGRES_PASSWORD=postgres \
     -e POSTGRES_DB=ingenius \
     -v ingenius-db-data:/var/lib/postgresql/data:Z \
-    postgres:15
+    postgres:17
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."

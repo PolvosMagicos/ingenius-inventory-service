@@ -7,31 +7,24 @@ RUN apk add --no-cache musl-dev pkgconf perl make
 # Set working directory inside the container
 WORKDIR /app
 
-# Copy Cargo files for dependency caching
+# First: copy Cargo.toml files to cache dependencies
 COPY Cargo.toml Cargo.lock ./
 COPY entity/Cargo.toml entity/
+COPY entity/src entity/src/
 
-# Create dummy main.rs for dependency caching
-RUN mkdir -p src && \
-    echo "fn main() {}" > src/main.rs && \
-    mkdir -p entity/src && \
-    echo "pub fn dummy() {}" > entity/src/lib.rs
+# Create a dummy main.rs that references entity
+RUN mkdir src && \
+    echo 'fn main() { println!("dummy"); }' > src/main.rs
 
-# Build dependencies
+# Build for dependency caching
 RUN cargo build --release --target x86_64-unknown-linux-musl
 
-# Remove the dummy files
-RUN rm -f src/main.rs entity/src/lib.rs
-
 # Copy the actual source code
-COPY . .
+COPY src src/
 
-# Verify files present
-RUN ls -la /app
-
-# Build the application
-RUN cargo build --release --target x86_64-unknown-linux-musl && \
-    ls -la target/x86_64-unknown-linux-musl/release/ingenius-inventory-service
+# Touch main.rs to ensure it rebuilds with actual content
+RUN touch src/main.rs && \
+    cargo build --release --target x86_64-unknown-linux-musl
 
 # ---- Final Stage ----
 FROM alpine:latest
@@ -53,9 +46,6 @@ WORKDIR /app
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/ingenius-inventory-service /app/ingenius-inventory-service
 
-# Not necesary env files
-# COPY --from=builder /app/.env* ./ 
-
 # Make sure the binary is executable
 RUN chmod +x /app/ingenius-inventory-service
 
@@ -63,10 +53,11 @@ RUN chmod +x /app/ingenius-inventory-service
 EXPOSE 8080
 
 # Set default environment variables
-ENV RUST_BACKTRACE=1
-ENV RUST_LOG=debug
+ENV RUST_BACKTRACE=1 \
+    RUST_LOG=debug \
+    JWT_SECRET=somesecret
 
-# Modified entrypoint for debugging
+# Copy and setup entrypoint
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
