@@ -1,16 +1,35 @@
 use actix_web::{web, App, HttpServer};
+use db::establish_connection;
 
+mod auth;
 mod classroom;
 mod db;
 mod list_detail;
 mod util;
 mod util_list;
 
-fn configure(cfg: &mut web::ServiceConfig) {
-    classroom::routes::config(cfg);
-    util::routes::config(cfg);
-    util_list::routes::config(cfg);
-    list_detail::routes::config(cfg);
+pub fn configure(cfg: &mut web::ServiceConfig) {
+    // Public routes (no authentication required)
+    cfg.service(
+        web::scope("/auth")
+            .route(
+                "/register",
+                web::post().to(auth::controllers::handlers::register),
+            )
+            .route("/login", web::post().to(auth::controllers::handlers::login)),
+    );
+
+    // Protected routes (require JWT authentication)
+    cfg.service(
+        web::scope("/api")
+            .wrap(auth::middleware::auth_middleware::AuthMiddleware::new(
+                std::env::var("JWT_SECRET").unwrap_or_else(|_| "your_secret_key".to_string()),
+            ))
+            .service(web::scope("/classroom").configure(classroom::routes::config))
+            .service(web::scope("/util").configure(util::routes::config))
+            .service(web::scope("/util-list").configure(util_list::routes::config))
+            .service(web::scope("/list-detail").configure(list_detail::routes::config)),
+    );
 }
 
 #[actix_web::main]
@@ -18,16 +37,32 @@ async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     env_logger::init();
 
+    let jwt_secret = std::env::var("JWT_SECRET").unwrap_or_else(|_| {
+        println!("Warning: JWT_SECRET not set, using default secret");
+        "your_secret_key".to_string()
+    });
+
     println!("Starting application...");
 
     // Establish database connection
-    let db = db::establish_connection().await;
-    let db_pool = web::Data::new(db);
+    let db = establish_connection().await;
+    let db_pool = web::Data::new(db.clone());
+
+    let auth_service = web::Data::new(auth::services::auth_service::AuthService::new(
+        db.clone(),
+        jwt_secret.clone(),
+    ));
 
     println!("Starting HTTP server...");
 
-    let server = HttpServer::new(move || App::new().app_data(db_pool.clone()).configure(configure))
-        .bind(("0.0.0.0", 8080));
+    let server = HttpServer::new(move || {
+        App::new()
+            .app_data(db_pool.clone())
+            .app_data(auth_service.clone())
+            .wrap(actix_web::middleware::Logger::default())
+            .configure(configure)
+    })
+    .bind(("0.0.0.0", 8080));
 
     let server = match server {
         Ok(s) => s,
