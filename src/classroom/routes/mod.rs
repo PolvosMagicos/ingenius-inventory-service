@@ -1,4 +1,4 @@
-use crate::classroom::controllers::handlers;
+use crate::{classroom::controllers::handlers, student};
 use actix_web::web;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -12,5 +12,9 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             .route(web::get().to(handlers::get_classroom))
             .route(web::patch().to(handlers::update_classroom))
             .route(web::delete().to(handlers::delete_classroom)),
+    )
+    .service(
+        web::resource("/{id}/students")
+            .route(web::get().to(student::controllers::handlers::get_students_by_classroom)),
     );
 }
