@@ -6,6 +6,7 @@ mod auth;
 mod classroom;
 mod db;
 mod list_detail;
+mod request;
 mod student;
 mod user;
 mod util;
@@ -33,6 +34,7 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
             .service(web::scope("/util-list").configure(util_list::routes::config))
             .service(web::scope("/list-detail").configure(list_detail::routes::config))
             .service(web::scope("/user").configure(user::routes::config))
+            .service(web::scope("/request").configure(request::routes::config))
             .service(web::scope("/student").configure(student::routes::config)),
     );
 }
