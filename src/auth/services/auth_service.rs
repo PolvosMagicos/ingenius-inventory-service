@@ -1,5 +1,6 @@
-use crate::auth::dtos::{
-    response::UserResponse, AuthResponse, Claims, LoginUserDto, RegisterUserDto,
+use crate::{
+    auth::dtos::{AuthResponse, Claims, LoginUserDto, RegisterUserDto},
+    user::dtos::response::UserResponse,
 };
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
@@ -11,17 +12,14 @@ use sea_orm::{
     ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter, Set,
 };
 use uuid::Uuid;
-
 pub struct AuthService {
     db: DatabaseConnection,
     jwt_secret: String,
 }
-
 impl AuthService {
     pub fn new(db: DatabaseConnection, jwt_secret: String) -> Self {
         Self { db, jwt_secret }
     }
-
     pub async fn register(&self, dto: RegisterUserDto) -> Result<AuthResponse, DbErr> {
         let salt = SaltString::generate(&mut OsRng);
 
