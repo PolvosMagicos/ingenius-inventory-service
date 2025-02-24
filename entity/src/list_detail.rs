@@ -15,20 +15,20 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::utils_list::Entity",
-        from = "Column::UtilsListId",
-        to = "super::utils_list::Column::Id"
-    )]
-    UtilsList,
-    #[sea_orm(
         belongs_to = "super::util::Entity",
         from = "Column::UtilId",
         to = "super::util::Column::Id"
     )]
     Util,
+    #[sea_orm(
+        belongs_to = "super::utils_list::Entity",
+        from = "Column::UtilsListId",
+        to = "super::utils_list::Column::Id"
+    )]
+    UtilsList,
 }
 
-impl Related<super::classroom::Entity> for Entity {
+impl Related<super::utils_list::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::UtilsList.def()
     }

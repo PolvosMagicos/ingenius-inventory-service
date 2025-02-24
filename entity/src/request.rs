@@ -28,8 +28,8 @@ pub enum Relation {
         to = "super::user::Column::Id"
     )]
     User,
-    #[sea_orm(has_many = "super::request::Entity")]
-    Request,
+    #[sea_orm(has_many = "super::request_detail::Entity")]
+    RequestDetail,
 }
 
 impl Related<super::classroom::Entity> for Entity {
@@ -44,9 +44,9 @@ impl Related<super::user::Entity> for Entity {
     }
 }
 
-impl Related<super::request::Entity> for Entity {
+impl Related<super::request_detail::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Request.def()
+        Relation::RequestDetail.def()
     }
 }
 
