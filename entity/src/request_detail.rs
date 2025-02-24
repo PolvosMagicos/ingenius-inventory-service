@@ -7,6 +7,7 @@ use uuid::Uuid;
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
+    pub request_id: Uuid,
     pub quantity: i32,
     pub util_id: Uuid,
 }
@@ -19,11 +20,23 @@ pub enum Relation {
         to = "super::util::Column::Id"
     )]
     Util,
+    #[sea_orm(
+        belongs_to = "super::request::Entity",
+        from = "Column::RequestId",
+        to = "super::request::Column::Id"
+    )]
+    Request,
 }
 
 impl Related<super::util::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Util.def()
+    }
+}
+
+impl Related<super::request::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Request.def()
     }
 }
 
