@@ -11,6 +11,7 @@ pub struct RegisterUserDto {
     pub email: String,
     #[validate(length(min = 8))]
     pub password: String,
+    pub role: String,
 }
 
 #[derive(Debug, Deserialize, Validate)]
