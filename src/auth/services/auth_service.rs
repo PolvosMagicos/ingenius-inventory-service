@@ -37,7 +37,7 @@ impl AuthService {
             email: Set(dto.email),
             password: Set(password_hash),
             photo_url: Set("".to_string()),
-            role: Set("user".to_string()),
+            role: Set(dto.role),
         };
 
         let user = user.insert(&self.db).await?;
