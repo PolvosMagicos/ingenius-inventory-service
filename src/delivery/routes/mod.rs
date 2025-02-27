@@ -1,4 +1,4 @@
-use crate::{delivery::controllers::handlers, student};
+use crate::{delivery::controllers::handlers, student, utils_delivery};
 use actix_web::web;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -12,5 +12,8 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             .route(web::get().to(handlers::get_delivery))
             .route(web::patch().to(handlers::update_delivery))
             .route(web::delete().to(handlers::delete_delivery)),
-    );
+    )
+    .service(web::resource("/{id}/utils-delivery").route(
+        web::get().to(utils_delivery::controllers::handlers::get_utils_deliveries_by_delivery),
+    ));
 }

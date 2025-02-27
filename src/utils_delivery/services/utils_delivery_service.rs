@@ -9,7 +9,9 @@ use entity::{
     delivery, student, user,
     utils_delivery::{ActiveModel, Entity, Model},
 };
-use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, Set};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter, Set,
+};
 use uuid::Uuid;
 
 pub struct UtilsDeliveryService;
@@ -104,6 +106,69 @@ impl UtilsDeliveryService {
                     status: delivery.state,
                 },
                 student: Some(student),
+            };
+
+            let user_response = UserResponse {
+                id: user.id,
+                name: user.name,
+                last_name: user.last_name,
+                email: user.email,
+                photo_url: user.photo_url,
+                role: user.role,
+            };
+
+            result.push(UtilsDeliveryWithDelivery {
+                id: utils_delivery.id,
+                delivery: delivery_response,
+                user: user_response,
+                date: utils_delivery.date.and_utc(),
+                observations: utils_delivery.observations,
+            });
+        }
+
+        Ok(result)
+    }
+
+    pub async fn get_utils_deliveries_by_delivery(
+        db: &DatabaseConnection,
+        delivery_id: Uuid,
+    ) -> Result<Vec<UtilsDeliveryWithDelivery>, DbErr> {
+        // Find utils_deliveries for this delivery
+        let utils_deliveries = Entity::find()
+            .filter(entity::utils_delivery::Column::DeliveryId.eq(delivery_id))
+            .all(db)
+            .await?;
+
+        let delivery = match delivery::Entity::find_by_id(delivery_id).one(db).await? {
+            Some(d) => d,
+            None => return Ok(vec![]),
+        };
+
+        let student = match student::Entity::find_by_id(delivery.student_id)
+            .one(db)
+            .await?
+        {
+            Some(s) => s,
+            None => return Ok(vec![]),
+        };
+
+        let mut result = Vec::new();
+
+        for utils_delivery in utils_deliveries {
+            let user = match user::Entity::find_by_id(utils_delivery.user_id)
+                .one(db)
+                .await?
+            {
+                Some(u) => u,
+                None => continue, // Skip if user not found
+            };
+
+            let delivery_response = DeliveryWithStudent {
+                delivery: DeliveryResponse {
+                    id: delivery.id,
+                    status: delivery.state.clone(),
+                },
+                student: Some(student.clone()),
             };
 
             let user_response = UserResponse {

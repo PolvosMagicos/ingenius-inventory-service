@@ -53,6 +53,33 @@ pub async fn get_all_utils_deliveries(db: web::Data<DatabaseConnection>) -> impl
     }
 }
 
+pub async fn get_utils_deliveries_by_delivery(
+    db: web::Data<DatabaseConnection>,
+    delivery_id: web::Path<Uuid>,
+) -> impl Responder {
+    let delivery_id = delivery_id.into_inner();
+    info!("Fetching utils deliveries for delivery id: {}", delivery_id);
+    let db = db.get_ref();
+    let result = UtilsDeliveryService::get_utils_deliveries_by_delivery(db, delivery_id).await;
+    match result {
+        Ok(utils_deliveries) => {
+            info!(
+                "Successfully fetched {} utils deliveries for delivery id: {}",
+                utils_deliveries.len(),
+                delivery_id
+            );
+            HttpResponse::Ok().json(utils_deliveries)
+        }
+        Err(e) => {
+            error!(
+                "Failed to fetch utils deliveries for delivery id {}: {}",
+                delivery_id, e
+            );
+            HttpResponse::InternalServerError().body("Internal server error")
+        }
+    }
+}
+
 pub async fn create_utils_delivery(
     db: web::Data<DatabaseConnection>,
     utils_delivery_dto: web::Json<CreateUtilsDeliveryDto>,
