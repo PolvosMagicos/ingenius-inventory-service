@@ -46,7 +46,7 @@ impl AuthService {
         Ok(AuthResponse {
             token,
             user: UserResponse {
-                id: user.id.to_string(),
+                id: user.id,
                 name: user.name,
                 last_name: user.last_name,
                 email: user.email,
@@ -76,7 +76,7 @@ impl AuthService {
                 return Ok(Some(AuthResponse {
                     token,
                     user: UserResponse {
-                        id: user.id.to_string(),
+                        id: user.id,
                         name: user.name,
                         last_name: user.last_name,
                         email: user.email,

@@ -13,6 +13,7 @@ mod student;
 mod user;
 mod util;
 mod util_list;
+mod utils_delivery;
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     // Public routes (no authentication required)
@@ -37,7 +38,9 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
             .service(web::scope("/list-detail").configure(list_detail::routes::config))
             .service(web::scope("/user").configure(user::routes::config))
             .service(web::scope("/request").configure(request::routes::config))
-            .service(web::scope("request-detail").configure(request_detail::routes::config))
+            .service(web::scope("/request-detail").configure(request_detail::routes::config))
+            .service(web::scope("/delivery").configure(delivery::routes::config))
+            .service(web::scope("/utils-delivery").configure(utils_delivery::routes::config))
             .service(web::scope("/student").configure(student::routes::config)),
     );
 }

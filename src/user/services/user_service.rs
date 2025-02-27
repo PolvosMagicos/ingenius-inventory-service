@@ -21,7 +21,7 @@ impl UserService {
 
         match user {
             Some(user) => Ok(Some(UserResponse {
-                id: user.id.to_string(),
+                id: user.id,
                 name: user.name,
                 last_name: user.last_name,
                 email: user.email,
@@ -37,7 +37,7 @@ impl UserService {
         let users = results
             .into_iter()
             .map(|user| UserResponse {
-                id: user.id.to_string(),
+                id: user.id,
                 name: user.name,
                 last_name: user.last_name,
                 email: user.email,
@@ -74,7 +74,7 @@ impl UserService {
 
         let inserted_user = new_user.insert(db).await?;
         Ok(UserResponse {
-            id: inserted_user.id.to_string(),
+            id: inserted_user.id,
             name: inserted_user.name,
             last_name: inserted_user.last_name,
             email: inserted_user.email,
@@ -112,7 +112,7 @@ impl UserService {
             let updated_user = active_model.update(db).await?;
 
             Ok(UserResponse {
-                id: updated_user.id.to_string(),
+                id: updated_user.id,
                 name: updated_user.name,
                 last_name: updated_user.last_name,
                 email: updated_user.email,

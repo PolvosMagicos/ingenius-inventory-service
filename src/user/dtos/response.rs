@@ -1,8 +1,9 @@
 use serde::Serialize;
+use uuid::Uuid;
 
 #[derive(Debug, Serialize)]
 pub struct UserResponse {
-    pub id: String,
+    pub id: Uuid,
     pub name: String,
     pub last_name: String,
     pub email: String,

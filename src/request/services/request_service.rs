@@ -49,7 +49,7 @@ impl RequestService {
             });
 
             let user_response = user_result.map(|u| UserResponse {
-                id: u.id.to_string(),
+                id: u.id,
                 name: u.name,
                 last_name: u.last_name,
                 email: u.email,
@@ -98,7 +98,7 @@ impl RequestService {
             });
 
             let user_response = user_result.map(|u| UserResponse {
-                id: u.id.to_string(),
+                id: u.id,
                 name: u.name,
                 last_name: u.last_name,
                 email: u.email,
