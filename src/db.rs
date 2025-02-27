@@ -52,6 +52,7 @@ pub async fn establish_connection() -> DatabaseConnection {
                     ("Student", db.execute(stmt_student).await),
                     ("User", db.execute(stmt_user).await),
                     ("Request", db.execute(stmt_request).await),
+                    ("RequestDetail", db.execute(stmt_request_detail).await),
                     ("Purchase", db.execute(stmt_purchase).await),
                     ("PurchaseDetail", db.execute(stmt_purchase_detail).await),
                     ("Delivery", db.execute(stmt_delivery).await),
