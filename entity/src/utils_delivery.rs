@@ -27,6 +27,8 @@ pub enum Relation {
         to = "super::user::Column::Id"
     )]
     User,
+    #[sea_orm(has_one = "super::utils_delivery_detail::Entity")]
+    UtilsDeliveryDetail,
 }
 
 impl Related<super::delivery::Entity> for Entity {
@@ -38,6 +40,12 @@ impl Related<super::delivery::Entity> for Entity {
 impl Related<super::user::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::User.def()
+    }
+}
+
+impl Related<super::utils_delivery_detail::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::UtilsDeliveryDetail.def()
     }
 }
 
