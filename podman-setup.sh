@@ -9,38 +9,42 @@ if ! podman network exists ingenius-network; then
         --opt dns_enabled=true
 fi
 
-# Remove existing pod if it exists
-if podman pod exists ingenius-pod; then
-    echo "Removing existing pod..."
-    podman pod rm -f ingenius-pod
+# Check if the pod exists
+if ! podman pod exists ingenius-pod; then
+    echo "Creating pod..."
+    podman pod create \
+        --name ingenius-pod \
+        --network ingenius-network \
+        --share net \
+        --publish 8080:8080 \
+        --publish 5433:5432
+else
+    echo "Pod already exists, skipping creation."
 fi
 
-
-# Remove existing volume if it exists
-if podman volume exists ingenius-db-data; then
-    echo "Removing existing volume..."
-    podman volume rm -f ingenius-db-data
+# Ensure the database volume exists
+if ! podman volume exists ingenius-db-data; then
+    echo "Creating database volume..."
+    podman volume create ingenius-db-data
+else
+    echo "Database volume exists, keeping data."
 fi
 
-# Create the pod with DNS settings
-echo "Creating pod..."
-podman pod create \
-    --name ingenius-pod \
-    --network ingenius-network \
-    --share net \
-    --publish 8080:8080 \
-    --publish 5433:5432
-
-# Start the database
-echo "Starting database..."
-podman run -d \
-    --pod ingenius-pod \
-    --name ingenius-db \
-    -e POSTGRES_USER=postgres \
-    -e POSTGRES_PASSWORD=postgres \
-    -e POSTGRES_DB=ingenius \
-    -v ingenius-db-data:/var/lib/postgresql/data:Z \
-    postgres:17
+# Check if the database container exists
+if ! podman container exists ingenius-db; then
+    echo "Starting database..."
+    podman run -d \
+        --pod ingenius-pod \
+        --name ingenius-db \
+        -e POSTGRES_USER=postgres \
+        -e POSTGRES_PASSWORD=postgres \
+        -e POSTGRES_DB=ingenius \
+        -v ingenius-db-data:/var/lib/postgresql/data:Z \
+        postgres:17
+else
+    echo "Database container already exists, ensuring it's running..."
+    podman start ingenius-db
+fi
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
