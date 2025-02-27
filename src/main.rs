@@ -16,6 +16,7 @@ mod util_list;
 mod utils_delivery;
 mod utils_delivery_detail;
 mod money_delivery;
+mod purchase;
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     // Public routes (no authentication required)
@@ -49,6 +50,7 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
                     .configure(utils_delivery_detail::routes::config),
             )
             .service(web::scope("/student").configure(student::routes::config)),
+            .service(web::scope("/purchase").configure(purchase::routes::config::config)),
     );
 }
 
