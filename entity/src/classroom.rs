@@ -10,6 +10,8 @@ pub struct Model {
     pub name: String,
     #[sea_orm(nullable)]
     pub utils_list_id: Option<Uuid>,
+    #[sea_orm(nullable)]
+    pub user_id: Option<Uuid>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -24,6 +26,12 @@ pub enum Relation {
         to = "super::utils_list::Column::Id"
     )]
     UtilsList,
+    #[sea_orm(
+        belongs_to = "super::user::Entity",
+        from = "Column::UserId",
+        to = "super::user::Column::Id"
+    )]
+    User,
 }
 
 impl Related<super::student::Entity> for Entity {
@@ -43,4 +51,11 @@ impl Related<super::request::Entity> for Entity {
         Relation::Request.def()
     }
 }
+
+impl Related<super::user::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::User.def()
+    }
+}
+
 impl ActiveModelBehavior for ActiveModel {}

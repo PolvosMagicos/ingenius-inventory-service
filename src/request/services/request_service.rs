@@ -40,14 +40,6 @@ impl RequestService {
                 None
             };
 
-            let classroom_with_utils = classroom_result.map(|c| ClassroomWithUtilsList {
-                classroom: ClassroomResponse {
-                    id: c.id,
-                    name: c.name,
-                },
-                utils_list,
-            });
-
             let user_response = user_result.map(|u| UserResponse {
                 id: u.id,
                 name: u.name,
@@ -55,6 +47,15 @@ impl RequestService {
                 email: u.email,
                 photo_url: u.photo_url,
                 role: u.role,
+            });
+
+            let classroom_with_utils = classroom_result.map(|c| ClassroomWithUtilsList {
+                classroom: ClassroomResponse {
+                    id: c.id,
+                    name: c.name,
+                },
+                utils_list,
+                user: user_response.clone(),
             });
 
             Ok(Some(RequestResponse {
@@ -89,14 +90,6 @@ impl RequestService {
                 None
             };
 
-            let classroom_with_utils = classroom_result.map(|c| ClassroomWithUtilsList {
-                classroom: ClassroomResponse {
-                    id: c.id,
-                    name: c.name,
-                },
-                utils_list,
-            });
-
             let user_response = user_result.map(|u| UserResponse {
                 id: u.id,
                 name: u.name,
@@ -104,6 +97,15 @@ impl RequestService {
                 email: u.email,
                 photo_url: u.photo_url,
                 role: u.role,
+            });
+
+            let classroom_with_utils = classroom_result.map(|c| ClassroomWithUtilsList {
+                classroom: ClassroomResponse {
+                    id: c.id,
+                    name: c.name,
+                },
+                utils_list,
+                user: user_response.clone(),
             });
 
             response_list.push(RequestResponse {

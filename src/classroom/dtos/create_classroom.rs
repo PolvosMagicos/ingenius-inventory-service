@@ -5,4 +5,5 @@ use uuid::Uuid;
 pub struct CreateClassroomDto {
     pub name: String,
     pub utils_list: Option<Uuid>,
+    pub user: Option<Uuid>,
 }

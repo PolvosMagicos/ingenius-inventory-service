@@ -27,9 +27,9 @@ pub async fn establish_connection() -> DatabaseConnection {
                 let stmt_utils_list = builder.build(&schema.create_table_from_entity(UtilsList));
                 let stmt_util = builder.build(&schema.create_table_from_entity(Util));
                 let stmt_list_detail = builder.build(&schema.create_table_from_entity(ListDetail));
+                let stmt_user = builder.build(&schema.create_table_from_entity(User));
                 let stmt_classroom = builder.build(&schema.create_table_from_entity(Classroom));
                 let stmt_student = builder.build(&schema.create_table_from_entity(Student));
-                let stmt_user = builder.build(&schema.create_table_from_entity(User));
                 let stmt_request = builder.build(&schema.create_table_from_entity(Request));
                 let stmt_request_detail =
                     builder.build(&schema.create_table_from_entity(RequestDetail));
@@ -51,9 +51,9 @@ pub async fn establish_connection() -> DatabaseConnection {
                     ("UtilsList", db.execute(stmt_utils_list).await),
                     ("Util", db.execute(stmt_util).await),
                     ("ListDetail", db.execute(stmt_list_detail).await),
+                    ("User", db.execute(stmt_user).await),
                     ("Classroom", db.execute(stmt_classroom).await),
                     ("Student", db.execute(stmt_student).await),
-                    ("User", db.execute(stmt_user).await),
                     ("Request", db.execute(stmt_request).await),
                     ("RequestDetail", db.execute(stmt_request_detail).await),
                     ("Purchase", db.execute(stmt_purchase).await),
