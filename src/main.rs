@@ -51,6 +51,7 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
             )
             .service(web::scope("/student").configure(student::routes::config)),
             .service(web::scope("/purchase").configure(purchase::routes::config)),
+            .service(web::scope("/purchase-detail").configure(purchase_detail::routes::config))
             .service(web::scope("/school-supply-balance").configure(school_supply_balance::routes::config)),
     );
 }
