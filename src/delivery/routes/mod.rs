@@ -12,9 +12,5 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             .route(web::get().to(handlers::get_delivery))
             .route(web::patch().to(handlers::update_delivery))
             .route(web::delete().to(handlers::delete_delivery)),
-    )
-    .service(
-        web::resource("/{id}/students")
-            .route(web::get().to(student::controllers::handlers::get_students_by_delivery)),
     );
 }

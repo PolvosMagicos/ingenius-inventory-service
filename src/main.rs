@@ -5,6 +5,7 @@ use db::establish_connection;
 mod auth;
 mod classroom;
 mod db;
+mod delivery;
 mod list_detail;
 mod request;
 mod request_detail;

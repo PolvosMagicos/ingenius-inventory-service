@@ -5,4 +5,4 @@ pub mod update_delivery;
 pub use update_delivery::UpdateDeliveryDto;
 
 pub mod delivery_response;
-pub use delivery_response::{DeliveryResponse, DeliveryWithUtilsList};
+pub use delivery_response::{DeliveryResponse, DeliveryWithStudent};

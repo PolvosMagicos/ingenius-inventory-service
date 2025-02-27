@@ -5,7 +5,7 @@ use uuid::Uuid;
 pub struct DeliveryWithStudent {
     #[serde(flatten)]
     pub delivery: DeliveryResponse,
-    pub student: Option<entity::student::Model>, 
+    pub student: Option<entity::student::Model>,
 }
 
 #[derive(Debug, Serialize)]

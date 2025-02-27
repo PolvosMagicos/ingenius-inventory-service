@@ -6,7 +6,7 @@ use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, Set};
 use uuid::Uuid;
 
 use crate::delivery::dtos::{
-    DeliveryResponse, DeliveryWithStudent, CreateDeliveryDto, UpdateDeliveryDto,
+    CreateDeliveryDto, DeliveryResponse, DeliveryWithStudent, UpdateDeliveryDto,
 };
 
 pub struct DeliveryService;
@@ -23,8 +23,7 @@ impl DeliveryService {
         Ok(result.map(|(delivery, student)| {
             let delivery_response = DeliveryResponse {
                 id: delivery.id,
-                student_id: delivery.student_id,
-                status: delivery.status,
+                status: delivery.state,
             };
             DeliveryWithStudent {
                 delivery: delivery_response,
@@ -46,8 +45,7 @@ impl DeliveryService {
             .map(|(delivery, student)| {
                 let delivery_response = DeliveryResponse {
                     id: delivery.id,
-                    student_id: delivery.student_id,
-                    status: delivery.status,
+                    status: delivery.state,
                 };
                 DeliveryWithStudent {
                     delivery: delivery_response,
@@ -64,8 +62,8 @@ impl DeliveryService {
     ) -> Result<Model, DbErr> {
         let delivery = ActiveModel {
             id: Set(Uuid::new_v4()),
-            student_id: Set(delivery_dto.student_id),
-            status: Set(delivery_dto.status),
+            student_id: Set(delivery_dto.student_id.unwrap()),
+            state: Set(delivery_dto.status),
         };
 
         delivery.insert(db).await
@@ -82,7 +80,7 @@ impl DeliveryService {
             let mut delivery_active_model: ActiveModel = existing_delivery.into();
 
             if let Some(status) = delivery_dto.status {
-                delivery_active_model.status = Set(status);
+                delivery_active_model.state = Set(status);
             }
 
             delivery_active_model.update(db).await
@@ -96,4 +94,3 @@ impl DeliveryService {
         Ok(())
     }
 }
-
