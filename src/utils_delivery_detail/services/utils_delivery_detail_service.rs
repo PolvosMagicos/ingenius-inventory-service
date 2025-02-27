@@ -9,7 +9,7 @@ use entity::{
     student, user, util, utils_delivery,
     utils_delivery_detail::{ActiveModel, Entity, Model},
 };
-use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, QueryTrait, Set};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, Set};
 use uuid::Uuid;
 
 pub struct UtilsDeliveryDetailService;

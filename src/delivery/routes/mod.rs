@@ -1,4 +1,4 @@
-use crate::{delivery::controllers::handlers, student, utils_delivery};
+use crate::{delivery::controllers::handlers, utils_delivery};
 use actix_web::web;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
