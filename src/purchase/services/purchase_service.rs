@@ -17,12 +17,14 @@ impl PurchaseService {
         Ok(result.map(|purchase| PurchaseResponse {
             id: purchase.id,
             total_spent: purchase.total_spent,
-            date: purchase.date,
+            date: purchase.date.and_utc(),
             user_id: purchase.user_id,
         }))
     }
 
-    pub async fn get_all_purchases(db: &DatabaseConnection) -> Result<Vec<PurchaseResponse>, DbErr> {
+    pub async fn get_all_purchases(
+        db: &DatabaseConnection,
+    ) -> Result<Vec<PurchaseResponse>, DbErr> {
         let results = Entity::find().all(db).await?;
 
         let purchases = results
@@ -30,7 +32,7 @@ impl PurchaseService {
             .map(|purchase| PurchaseResponse {
                 id: purchase.id,
                 total_spent: purchase.total_spent,
-                date: purchase.date,
+                date: purchase.date.and_utc(),
                 user_id: purchase.user_id,
             })
             .collect();
@@ -51,8 +53,8 @@ impl PurchaseService {
             .into_iter()
             .map(|purchase| PurchaseResponse {
                 id: purchase.id,
-                total_spent	: purchase.total_spent,
-                date: purchase.date,
+                total_spent: purchase.total_spent,
+                date: purchase.date.and_utc(),
                 user_id: purchase.user_id,
             })
             .collect();
@@ -67,7 +69,7 @@ impl PurchaseService {
         let purchase = ActiveModel {
             id: Set(Uuid::new_v4()),
             total_spent: Set(purchase_dto.total_spent),
-            date: Set(purchase_dto.date),
+            date: Set(purchase_dto.date.naive_utc()),
             user_id: Set(purchase_dto.user_id),
         };
 
@@ -89,7 +91,7 @@ impl PurchaseService {
             }
 
             if let Some(date) = purchase_dto.date {
-                purchase_active_model.date = Set(date);
+                purchase_active_model.date = Set(date.naive_utc());
             }
 
             if let Some(user_id) = purchase_dto.user_id {

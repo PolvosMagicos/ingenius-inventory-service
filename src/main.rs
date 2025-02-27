@@ -7,16 +7,18 @@ mod classroom;
 mod db;
 mod delivery;
 mod list_detail;
+mod money_delivery;
+mod purchase;
+mod purchase_detail;
 mod request;
 mod request_detail;
+mod school_supply_balance;
 mod student;
 mod user;
 mod util;
 mod util_list;
 mod utils_delivery;
 mod utils_delivery_detail;
-mod money_delivery;
-mod purchase;
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     // Public routes (no authentication required)
@@ -49,10 +51,13 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
                 web::scope("/utils-delivery-detail")
                     .configure(utils_delivery_detail::routes::config),
             )
-            .service(web::scope("/student").configure(student::routes::config)),
-            .service(web::scope("/purchase").configure(purchase::routes::config)),
+            .service(web::scope("/student").configure(student::routes::config))
+            .service(web::scope("/purchase").configure(purchase::routes::config))
             .service(web::scope("/purchase-detail").configure(purchase_detail::routes::config))
-            .service(web::scope("/school-supply-balance").configure(school_supply_balance::routes::config)),
+            .service(
+                web::scope("/school-supply-balance")
+                    .configure(school_supply_balance::routes::config),
+            ),
     );
 }
 

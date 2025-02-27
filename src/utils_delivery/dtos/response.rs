@@ -3,8 +3,7 @@ use serde::Serialize;
 use uuid::Uuid;
 
 use crate::{
-    delivery::dtos::{delivery_response::DeliveryWithStudent, DeliveryResponse},
-    user::dtos::response::UserResponse,
+    delivery::dtos::delivery_response::DeliveryWithStudent, user::dtos::response::UserResponse,
 };
 
 #[derive(Debug, Serialize)]

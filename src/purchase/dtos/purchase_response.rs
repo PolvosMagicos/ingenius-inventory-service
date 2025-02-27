@@ -1,10 +1,11 @@
+use sea_orm::prelude::{DateTimeUtc, Decimal};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PurchaseResponse {
     pub id: Uuid,
-    pub total_spent: f64,
-    pub date: String,
+    pub total_spent: Decimal,
+    pub date: DateTimeUtc,
     pub user_id: Uuid,
 }

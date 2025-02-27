@@ -1,11 +1,11 @@
-use crate::purchase::dtos::{PurchaseResponse, PurchaseWithUser};
-use crate::user::dtos::response::UserResponse;
+use crate::purchase::dtos::PurchaseResponse;
 use crate::purchase_detail::dtos::{
-    CreatePurchaseDetailDto, UpdatePurchaseDetailDto, PurchaseDetailResponse,
+    CreatePurchaseDetailDto, PurchaseDetailResponse, UpdatePurchaseDetailDto,
 };
 use entity::{
-    purchase, user, util,
+    purchase,
     purchase_detail::{ActiveModel, Entity, Model},
+    util,
 };
 use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, Set};
 use uuid::Uuid;
@@ -28,26 +28,11 @@ impl PurchaseDetailService {
                 .await?;
 
             if let Some(purchase) = purchase {
-                let user = user::Entity::find_by_id(purchase.user_id)
-                    .one(db)
-                    .await?
-                    .unwrap();
-
-                let user_response = UserResponse {
-                    id: user.id,
-                    name: user.name,
-                    last_name: user.last_name,
-                    email: user.email,
-                    photo_url: user.photo_url,
-                    role: user.role,
-                };
-
-                let purchase_response = PurchaseWithUser {
-                    purchase: PurchaseResponse {
-                        id: purchase.id,
-                        status: purchase.state,
-                    },
-                    user: user_response,
+                let purchase_response = PurchaseResponse {
+                    id: purchase.id,
+                    total_spent: purchase.total_spent,
+                    date: purchase.date.and_utc(),
+                    user_id: purchase.user_id,
                 };
 
                 return Ok(Some(PurchaseDetailResponse {
@@ -55,7 +40,7 @@ impl PurchaseDetailService {
                     util: util.unwrap(),
                     purchase: purchase_response,
                     unit_price: detail.unit_price,
-                    amount: detail.amount,
+                    quantity: detail.quantity,
                 }));
             }
         }
@@ -78,26 +63,11 @@ impl PurchaseDetailService {
                 .await?;
 
             if let Some(purchase) = purchase {
-                let user = user::Entity::find_by_id(purchase.user_id)
-                    .one(db)
-                    .await?
-                    .unwrap();
-
-                let user_response = UserResponse {
-                    id: user.id,
-                    name: user.name,
-                    last_name: user.last_name,
-                    email: user.email,
-                    photo_url: user.photo_url,
-                    role: user.role,
-                };
-
-                let purchase_response = PurchaseWithUser {
-                    purchase: PurchaseResponse {
-                        id: purchase.id,
-                        status: purchase.state,
-                    },
-                    user: user_response,
+                let purchase_response = PurchaseResponse {
+                    id: purchase.id,
+                    total_spent: purchase.total_spent,
+                    date: purchase.date.and_utc(),
+                    user_id: purchase.user_id,
                 };
 
                 details_responses.push(PurchaseDetailResponse {
@@ -105,7 +75,7 @@ impl PurchaseDetailService {
                     util: util.clone().unwrap(),
                     purchase: purchase_response,
                     unit_price: detail.unit_price,
-                    amount: detail.amount,
+                    quantity: detail.quantity,
                 });
             }
         }
@@ -121,7 +91,7 @@ impl PurchaseDetailService {
             purchase_id: Set(detail_dto.purchase_id),
             util_id: Set(detail_dto.util_id),
             unit_price: Set(detail_dto.unit_price),
-            amount: Set(detail_dto.amount),
+            quantity: Set(detail_dto.quantity),
         };
         detail.insert(db).await
     }
@@ -148,20 +118,19 @@ impl PurchaseDetailService {
                 detail_active_model.unit_price = Set(unit_price);
             }
 
-            if let Some(amount) = detail_dto.amount {
-                detail_active_model.amount = Set(amount);
+            if let Some(quantity) = detail_dto.quantity {
+                detail_active_model.quantity = Set(quantity);
             }
 
             detail_active_model.update(db).await
         } else {
-            Err(DbErr::RecordNotFound("PurchaseDetail not found".to_string()))
+            Err(DbErr::RecordNotFound(
+                "PurchaseDetail not found".to_string(),
+            ))
         }
     }
 
-    pub async fn delete_purchase_detail(
-        db: &DatabaseConnection,
-        id: Uuid,
-    ) -> Result<(), DbErr> {
+    pub async fn delete_purchase_detail(db: &DatabaseConnection, id: Uuid) -> Result<(), DbErr> {
         Entity::delete_by_id(id).exec(db).await?;
         Ok(())
     }

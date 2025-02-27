@@ -14,7 +14,7 @@ pub async fn get_school_supply_balance(
     let balance_id = id.into_inner();
     info!("Fetching school supply balance with id: {}", balance_id);
     let db = db.get_ref();
-    let balance = SchoolSupplyBalanceService::get_balance(db, balance_id).await;
+    let balance = SchoolSupplyBalanceService::get_school_supply_balance(db, balance_id).await;
 
     match balance {
         Ok(Some(balance)) => {
@@ -35,7 +35,7 @@ pub async fn get_school_supply_balance(
 pub async fn get_all_school_supply_balances(db: web::Data<DatabaseConnection>) -> impl Responder {
     info!("Fetching all school supply balances");
     let db = db.get_ref();
-    let balances = SchoolSupplyBalanceService::get_all_balances(db).await;
+    let balances = SchoolSupplyBalanceService::get_all_school_supply_balances(db).await;
 
     match balances {
         Ok(balances) => {
@@ -53,9 +53,14 @@ pub async fn create_school_supply_balance(
     db: web::Data<DatabaseConnection>,
     balance_dto: web::Json<CreateSchoolSupplyBalanceDto>,
 ) -> impl Responder {
-    info!("Creating new school supply balance with data: {:?}", balance_dto);
+    info!(
+        "Creating new school supply balance with data: {:?}",
+        balance_dto
+    );
     let db = db.get_ref();
-    let result = SchoolSupplyBalanceService::create_balance(db, balance_dto.into_inner()).await;
+    let result =
+        SchoolSupplyBalanceService::create_school_supply_balance(db, balance_dto.into_inner())
+            .await;
 
     match result {
         Ok(balance) => {
@@ -80,8 +85,12 @@ pub async fn update_school_supply_balance(
         balance_id, balance_dto
     );
     let db = db.get_ref();
-    let result =
-        SchoolSupplyBalanceService::update_balance(db, balance_id, balance_dto.into_inner()).await;
+    let result = SchoolSupplyBalanceService::update_school_supply_balance(
+        db,
+        balance_id,
+        balance_dto.into_inner(),
+    )
+    .await;
 
     match result {
         Ok(balance) => {
@@ -89,10 +98,7 @@ pub async fn update_school_supply_balance(
             HttpResponse::Ok().json(balance)
         }
         Err(e) => {
-            error!(
-                "Failed to update balance with id: {}: {}",
-                balance_id, e
-            );
+            error!("Failed to update balance with id: {}: {}", balance_id, e);
             HttpResponse::InternalServerError().body("Internal server error")
         }
     }
@@ -105,7 +111,7 @@ pub async fn delete_school_supply_balance(
     let balance_id = id.into_inner();
     info!("Deleting school supply balance with id: {}", balance_id);
     let db = db.get_ref();
-    let result = SchoolSupplyBalanceService::delete_balance(db, balance_id).await;
+    let result = SchoolSupplyBalanceService::delete_school_supply_balance(db, balance_id).await;
 
     match result {
         Ok(_) => {
@@ -113,10 +119,7 @@ pub async fn delete_school_supply_balance(
             HttpResponse::Ok().body("School supply balance deleted")
         }
         Err(e) => {
-            error!(
-                "Failed to delete balance with id: {}: {}",
-                balance_id, e
-            );
+            error!("Failed to delete balance with id: {}: {}", balance_id, e);
             HttpResponse::InternalServerError().body("Internal server error")
         }
     }

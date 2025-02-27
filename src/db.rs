@@ -1,6 +1,7 @@
 use entity::{
     Classroom, Delivery, ListDetail, MoneyDelivery, Purchase, PurchaseDetail, Request,
-    SchoolSupplyBalance, Student, User, Util, UtilsDelivery, UtilsDeliveryDetail, UtilsList,
+    RequestDetail, SchoolSupplyBalance, Student, User, Util, UtilsDelivery, UtilsDeliveryDetail,
+    UtilsList,
 };
 use sea_orm::{ConnectionTrait, Database, DatabaseConnection, Schema};
 use std::env;
@@ -30,6 +31,8 @@ pub async fn establish_connection() -> DatabaseConnection {
                 let stmt_student = builder.build(&schema.create_table_from_entity(Student));
                 let stmt_user = builder.build(&schema.create_table_from_entity(User));
                 let stmt_request = builder.build(&schema.create_table_from_entity(Request));
+                let stmt_request_detail =
+                    builder.build(&schema.create_table_from_entity(RequestDetail));
                 let stmt_purchase = builder.build(&schema.create_table_from_entity(Purchase));
                 let stmt_purchase_detail =
                     builder.build(&schema.create_table_from_entity(PurchaseDetail));

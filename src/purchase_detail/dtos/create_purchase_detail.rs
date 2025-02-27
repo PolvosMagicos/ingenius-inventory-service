@@ -1,3 +1,4 @@
+use sea_orm::prelude::Decimal;
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -5,6 +6,6 @@ use uuid::Uuid;
 pub struct CreatePurchaseDetailDto {
     pub purchase_id: Uuid,
     pub util_id: Uuid,
-    pub unit_price: f64,
-    pub amount: i32,
+    pub unit_price: Decimal,
+    pub quantity: i32,
 }
