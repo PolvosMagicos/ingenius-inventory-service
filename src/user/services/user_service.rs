@@ -69,7 +69,7 @@ impl UserService {
             password: Set(password_hash),
             email: Set(user.email),
             photo_url: Set("".to_string()),
-            role: Set("user".to_string()),
+            role: Set(user.role),
         };
 
         let inserted_user = new_user.insert(db).await?;

@@ -6,7 +6,6 @@ use crate::purchase::dtos::PurchaseResponse;
 
 #[derive(Debug, Serialize)]
 pub struct PurchaseDetailResponse {
-    #[serde(flatten)]
     pub id: Uuid,
     pub util: entity::util::Model,
     pub purchase: PurchaseResponse,
