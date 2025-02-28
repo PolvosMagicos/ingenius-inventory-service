@@ -10,7 +10,6 @@ pub struct RequestDetailWithUtil {
 
 #[derive(Debug, Serialize)]
 pub struct RequestDetailResponse {
-    #[serde(flatten)]
     pub id: Uuid,
     pub request: Uuid,
     pub quantity: i32,

@@ -5,7 +5,6 @@ use crate::{classroom::dtos::ClassroomWithUtilsList, user::dtos::response::UserR
 
 #[derive(Debug, Serialize)]
 pub struct RequestResponse {
-    #[serde(flatten)]
     pub id: String,
     pub justification: String,
     pub date: DateTimeUtc,
